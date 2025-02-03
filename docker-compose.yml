@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: quiz
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/mysql
+
+  web:
+    build: .
+    container_name: quizz-app
+    depends_on:
+      - db
+    environment:
+      DB_HOST: mysql-db
+      DB_PORT: 3306
+      DB_NAME: quiz
+      DB_USER: root
+      DB_PASSWORD: root
+    ports:
+      - "9091:8080"
+    restart: always
+
+volumes:
+  db_data:
+
